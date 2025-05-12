@@ -1,20 +1,18 @@
-# Text TV Viewer
+# TextTV Viewer
 
 A C# console application for displaying Text TV pages from the texttv.nu API with proper styling and formatting.
 
 > **Note**: This project was vibe coded with Windsurf and Sonnet 3.7, including these docs.
 
-## Screenshot
+## Recording
 
-![Text TV Screenshot](media/texttv-screenshot.png)
+![Demo](media/demo.gif)
 
-[Recording](media/recording.mp4)
-
-*Screenshot of the Text TV viewer displaying page 100, showing headlines in yellow, secondary content in cyan, and a blue navigation bar at the bottom.*
+*Recording of the TextTV viewer navigating pages.*
 
 ## Project Overview
 
-This application fetches Text TV content from the texttv.nu API and renders it in the console with appropriate styling:
+This application fetches TextTV content from the texttv.nu API and renders it in the console with appropriate styling:
 - Yellow headlines
 - Cyan secondary text
 - White regular text
