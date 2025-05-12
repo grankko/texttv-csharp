@@ -7,7 +7,7 @@ namespace TextTv.Cli.Tests;
 /// <summary>
 /// Helper class for mocking HttpClient
 /// </summary>
-public class HttpClientMock
+public partial class HttpClientMock
 {
     private readonly Mock<HttpMessageHandler> _handlerMock;
     
