@@ -34,25 +34,46 @@ public class TextTvRenderer
         Console.Clear();
         Console.BackgroundColor = ConsoleColor.Black;
         
-        RenderHeader(page.Num);
-        RenderContent(page.Content);
-        RenderFooter();
+
+        
+        // Choose the appropriate footer based on mode
+        bool isUrlMode = page.Num.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+        if (isUrlMode)
+        {
+            RenderHeader(page.Num, true);
+            RenderContent(page.Content);
+            RenderUrlModeFooter();
+        }
+        else
+        {
+            RenderHeader(page.Num, false);
+            RenderContent(page.Content);
+            RenderPageNumberFooter();
+        }
     }
     
-    private void RenderHeader(string pageNumber)
+    private void RenderHeader(string pageNumber, bool isUrlMode)
     {
         // Page header with page number and date
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write($"{pageNumber} ");
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write("SVT Text");
+        if (!isUrlMode)
+            Console.Write("SVT Text");
+        else
+            Console.Write("WEB TV");
+        
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine($" {DateTime.Now:dddd d MMM yyyy}");
         
         // SVT Text logo in blue bar
         Console.BackgroundColor = ConsoleColor.Blue;
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("SVT TEXT".PadLeft(20).PadRight(40));
+        
+        if (!isUrlMode)
+            Console.WriteLine("SVT TEXT".PadLeft(20).PadRight(40));
+        else
+            Console.WriteLine("WEB TV".PadLeft(20).PadRight(40));
         
         // Reset to black background
         Console.BackgroundColor = ConsoleColor.Black;
@@ -104,13 +125,32 @@ public class TextTvRenderer
         }
     }
     
-    private void RenderFooter()
+    /// <summary>
+    /// Renders the footer for page number mode with navigation to other pages
+    /// </summary>
+    private void RenderPageNumberFooter()
     {
         // Bottom navigation bar
         Console.WriteLine();
         Console.BackgroundColor = ConsoleColor.Blue;
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("Inrikes 101 Utrikes 104 Innehåll 700".PadRight(40));
+        
+        // Reset colors
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.ForegroundColor = ConsoleColor.White;
+    }
+    
+    /// <summary>
+    /// Renders the footer for URL mode without page number references
+    /// </summary>
+    private void RenderUrlModeFooter()
+    {
+        // Bottom navigation bar without page references
+        Console.WriteLine();
+        Console.BackgroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("Web URL Mode".PadRight(40));
         
         // Reset colors
         Console.BackgroundColor = ConsoleColor.Black;

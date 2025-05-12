@@ -1,3 +1,7 @@
 # Publish folder
 publish/*
 !publish/README.md
+
+# Settings files
+**/appsettings.json
+**/appsettings.*.json
