@@ -1,0 +1,3 @@
+# Publish folder
+publish/*
+!publish/README.md
