@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TextTv.Cli.Helpers;
 
 namespace TextTv.Cli.Tests;

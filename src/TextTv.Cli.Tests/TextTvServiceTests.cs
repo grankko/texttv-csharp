@@ -1,7 +1,5 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net;
 using TextTv.Cli.Services;
-using TextTv.Cli.Models;
 
 namespace TextTv.Cli.Tests;
 

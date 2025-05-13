@@ -2,7 +2,7 @@
 
 A C# console application for displaying Text TV pages from the texttv.nu API with proper styling and formatting. Now supports converting web pages to TextTV format using OpenAI's GPT-4.1.
 
-> **Note**: This project was vibe coded with Windsurf and Sonnet 3.7, including these docs.
+> **Note**: This project, including this readme, was vibe coded with Windsurf / Sonnet 3.7 and GitHub Copilot Agent / GPT 4.1. 
 
 ## Demo TextTV Mode
 

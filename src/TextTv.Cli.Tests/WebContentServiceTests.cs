@@ -1,6 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net;
-using System.Net.Http;
 using TextTv.Cli.Services.Web;
 
 namespace TextTv.Cli.Tests;

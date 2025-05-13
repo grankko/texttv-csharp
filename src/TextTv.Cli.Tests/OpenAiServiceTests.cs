@@ -1,8 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenAI.Chat;
-using System.Text.Json;
 using TextTv.Cli.Configuration;
-using TextTv.Cli.Models;
 using TextTv.Cli.Services.OpenAi;
 
 namespace TextTv.Cli.Tests;

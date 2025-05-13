@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Net.Http;
 
 namespace TextTv.Cli.Helpers;
 
