@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch TextTv.Cli",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/TextTv.Cli/bin/Debug/net9.0/TextTv.Cli.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/TextTv.Cli",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch TextTv.Cli (with page number)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/TextTv.Cli/bin/Debug/net9.0/TextTv.Cli.dll",
+            "args": ["100"],
+            "cwd": "${workspaceFolder}/src/TextTv.Cli",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch TextTv.Cli (web mode)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/TextTv.Cli/bin/Debug/net9.0/TextTv.Cli.dll",
+            "args": ["-w", "https://example.com"],
+            "cwd": "${workspaceFolder}/src/TextTv.Cli",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}

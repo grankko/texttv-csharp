@@ -98,10 +98,10 @@ TextTv.sln
 ## Dependencies
 
 - .NET 9.0
-- HtmlAgilityPack 1.12.1 (for HTML parsing)
-- Azure.AI.OpenAI 1.0.0-beta.12 (for OpenAI integration)
-- Microsoft.Extensions.Configuration.Json 8.0.0 (for settings handling)
-- Moq 4.20.72 (for testing)
+- HtmlAgilityPack (for HTML parsing)
+- OpenAI (official .NET SDK for OpenAI integration)
+- Microsoft.Extensions.Configuration.Json (for settings handling)
+- Moq (for testing)
 - MSTest framework
 
 ## Building the Application

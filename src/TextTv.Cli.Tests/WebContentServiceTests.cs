@@ -9,14 +9,6 @@ namespace TextTv.Cli.Tests;
 public class WebContentServiceTests
 {
     [TestMethod]
-    [Ignore("Requires more setup with the mocking framework")]
-    public async Task FetchWebContentAsync_ValidUrl_ExtractsContent()
-    {
-        // This test requires additional setup with the mocking framework
-        // Will be implemented in a future update
-    }
-    
-    [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public async Task FetchWebContentAsync_InvalidUrl_ThrowsException()
     {
@@ -26,5 +18,17 @@ public class WebContentServiceTests
         
         // Act & Assert - Exception expected
         await service.FetchWebContentAsync("not-a-valid-url");
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public async Task FetchWebContentAsync_EmptyUrl_ThrowsException()
+    {
+        // Arrange
+        var httpClient = new HttpClient();
+        var service = new WebContentService(httpClient);
+        
+        // Act & Assert - Exception expected
+        await service.FetchWebContentAsync(string.Empty);
     }
 }

@@ -16,7 +16,7 @@ public class TextParsingHelperTests
         var node = doc.DocumentNode.SelectSingleNode("//div");
         
         // Act
-        var color = TextParsingHelper.DetermineTextColor(node);
+        var color = TextParsingHelper.DetermineTextColor(node!);
         
         // Assert
         Assert.AreEqual(ConsoleColor.Yellow, color);
@@ -31,7 +31,7 @@ public class TextParsingHelperTests
         var node = doc.DocumentNode.SelectSingleNode("//div");
         
         // Act
-        var color = TextParsingHelper.DetermineTextColor(node);
+        var color = TextParsingHelper.DetermineTextColor(node!);
         
         // Assert
         Assert.AreEqual(ConsoleColor.Cyan, color);
@@ -46,7 +46,7 @@ public class TextParsingHelperTests
         var node = doc.DocumentNode.SelectSingleNode("//div");
         
         // Act
-        var color = TextParsingHelper.DetermineTextColor(node);
+        var color = TextParsingHelper.DetermineTextColor(node!);
         
         // Assert
         Assert.AreEqual(ConsoleColor.White, color);
@@ -56,7 +56,9 @@ public class TextParsingHelperTests
     public void DetermineTextColor_WhiteForNullNode()
     {
         // Act
-        var color = TextParsingHelper.DetermineTextColor(null!);
+        // The null! operator tells the compiler we know this is null and to suppress warnings
+        HtmlNode? nullNode = null;
+        var color = TextParsingHelper.DetermineTextColor(nullNode!);
         
         // Assert
         Assert.AreEqual(ConsoleColor.White, color);
@@ -71,7 +73,7 @@ public class TextParsingHelperTests
         var node = doc.DocumentNode.SelectSingleNode("//div");
         
         // Act
-        var text = TextParsingHelper.ExtractTextContent(node);
+        var text = TextParsingHelper.ExtractTextContent(node!);
         
         // Assert
         Assert.AreEqual("Plain Text Content", text);
@@ -86,7 +88,7 @@ public class TextParsingHelperTests
         var node = doc.DocumentNode.SelectSingleNode("//div");
         
         // Act
-        var text = TextParsingHelper.ExtractTextContent(node);
+        var text = TextParsingHelper.ExtractTextContent(node!);
         
         // Assert
         Assert.AreEqual("Go to page 100 for more", text);
@@ -96,7 +98,9 @@ public class TextParsingHelperTests
     public void ExtractTextContent_HandlesNullNode()
     {
         // Act
-        var text = TextParsingHelper.ExtractTextContent(null!);
+        // The null! operator tells the compiler we know this is null and to suppress warnings
+        HtmlNode? nullNode = null;
+        var text = TextParsingHelper.ExtractTextContent(nullNode!);
         
         // Assert
         Assert.AreEqual(string.Empty, text);

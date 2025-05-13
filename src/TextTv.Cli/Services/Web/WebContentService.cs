@@ -23,8 +23,15 @@ public class WebContentService
     /// </summary>
     /// <param name="url">The URL to fetch content from</param>
     /// <returns>The extracted relevant content from the web page</returns>
+    /// <exception cref="ArgumentException">Thrown when the URL is null, empty, or invalid</exception>
+    /// <exception cref="HttpRequestException">Thrown when there's an error fetching the web page</exception>
     public async Task<string> FetchWebContentAsync(string url)
     {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            throw new ArgumentException("URL cannot be null or empty", nameof(url));
+        }
+        
         try
         {
             // Validate URL
@@ -38,6 +45,10 @@ public class WebContentService
             response.EnsureSuccessStatusCode();
             
             var content = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return string.Empty;
+            }
             
             // Parse and extract relevant content
             return ExtractRelevantContent(content);
@@ -56,14 +67,24 @@ public class WebContentService
     /// <returns>Extracted text content</returns>
     private string ExtractRelevantContent(string htmlContent)
     {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+        {
+            return string.Empty;
+        }
+        
         var doc = new HtmlDocument();
         doc.LoadHtml(htmlContent);
+        
+        if (doc.DocumentNode == null)
+        {
+            return string.Empty;
+        }
         
         var contentBuilder = new StringBuilder();
         
         // Extract title
         var titleNode = doc.DocumentNode.SelectSingleNode("//title");
-        if (titleNode != null)
+        if (titleNode != null && !string.IsNullOrWhiteSpace(titleNode.InnerText))
         {
             contentBuilder.AppendLine($"TITLE: {titleNode.InnerText.Trim()}");
             contentBuilder.AppendLine();
@@ -73,7 +94,7 @@ public class WebContentService
         var metaDescription = doc.DocumentNode.SelectSingleNode("//meta[@name='description']");
         if (metaDescription != null)
         {
-            var content = metaDescription.GetAttributeValue("content", "");
+            var content = metaDescription.GetAttributeValue("content", string.Empty);
             if (!string.IsNullOrWhiteSpace(content))
             {
                 contentBuilder.AppendLine($"DESCRIPTION: {content.Trim()}");
@@ -104,11 +125,26 @@ public class WebContentService
                 {
                     foreach (var node in scriptsAndStyles)
                     {
-                        node.Remove();
+                        if (node != null)
+                        {
+                            node.Remove();
+                        }
                     }
                 }
                 
                 ExtractTextFromNode(body, contentBuilder);
+            }
+        }
+        
+        // If we couldn't extract anything meaningful, try to get at least something from the page
+        if (contentBuilder.Length == 0 && doc.DocumentNode != null)
+        {
+            var plainText = doc.DocumentNode.InnerText;
+            if (!string.IsNullOrWhiteSpace(plainText))
+            {
+                // Clean up the text (remove excessive whitespace, etc.)
+                plainText = System.Text.RegularExpressions.Regex.Replace(plainText, @"\s+", " ").Trim();
+                contentBuilder.AppendLine(plainText);
             }
         }
         
@@ -118,15 +154,27 @@ public class WebContentService
     /// <summary>
     /// Extracts text content from a node and its children
     /// </summary>
+    /// <param name="node">The HTML node to extract text from</param>
+    /// <param name="builder">The StringBuilder to append text to</param>
     private void ExtractTextFromNode(HtmlNode node, StringBuilder builder)
     {
+        if (node == null || builder == null)
+        {
+            return;
+        }
+        
         // Extract headers
         var headers = node.SelectNodes(".//h1|.//h2|.//h3|.//h4");
-        if (headers != null)
+        if (headers != null && headers.Count > 0)
         {
             foreach (var header in headers)
             {
-                var headerText = header.InnerText.Trim();
+                if (header == null)
+                {
+                    continue;
+                }
+                
+                var headerText = header.InnerText?.Trim() ?? string.Empty;
                 if (!string.IsNullOrWhiteSpace(headerText))
                 {
                     builder.AppendLine($"HEADER: {headerText}");
@@ -137,11 +185,16 @@ public class WebContentService
         
         // Extract paragraphs
         var paragraphs = node.SelectNodes(".//p");
-        if (paragraphs != null)
+        if (paragraphs != null && paragraphs.Count > 0)
         {
             foreach (var paragraph in paragraphs)
             {
-                var paragraphText = paragraph.InnerText.Trim();
+                if (paragraph == null)
+                {
+                    continue;
+                }
+                
+                var paragraphText = paragraph.InnerText?.Trim() ?? string.Empty;
                 if (!string.IsNullOrWhiteSpace(paragraphText))
                 {
                     builder.AppendLine(paragraphText);

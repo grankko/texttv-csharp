@@ -1,4 +1,4 @@
-using Azure.AI.OpenAI;
+using OpenAI.Chat;
 using System.Text.Json;
 using TextTv.Cli.Configuration;
 using TextTv.Cli.Models;
@@ -11,7 +11,7 @@ namespace TextTv.Cli.Services.OpenAi;
 public class OpenAiService
 {
     private readonly Settings _settings;
-    private readonly OpenAIClient _client;
+    private readonly ChatClient _chatClient;
     
     /// <summary>
     /// Creates a new OpenAiService with the provided settings
@@ -26,7 +26,10 @@ public class OpenAiService
                 "OpenAI API key is missing. Please update your appsettings.json file with a valid API key.");
         }
         
-        _client = new OpenAIClient(_settings.OpenAiApiKey);
+        // Create the OpenAI ChatClient with the model and API key
+        _chatClient = new ChatClient(
+            model: _settings.OpenAiModel,
+            apiKey: _settings.OpenAiApiKey);
     }
     
     /// <summary>
@@ -37,32 +40,49 @@ public class OpenAiService
     /// <returns>A TextTvPage object with the converted content</returns>
     public async Task<TextTvPage?> ConvertWebToTextTvAsync(string url, string webContent)
     {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            throw new ArgumentException("URL cannot be null or empty", nameof(url));
+        }
+        
+        if (string.IsNullOrWhiteSpace(webContent))
+        {
+            throw new ArgumentException("Web content cannot be null or empty", nameof(webContent));
+        }
+        
         try
         {
-            // Prepare the chat completion options
-            var chatCompletionOptions = new ChatCompletionsOptions
+            // Prepare the chat messages
+            var messages = new List<ChatMessage>
             {
-                DeploymentName = _settings.OpenAiModel,
-                Temperature = 0.2f, // Low temperature for consistent, formatted output
-                MaxTokens = 1000   // Limit the response size
+                // Add the system message
+                new SystemChatMessage(PromptConstants.TextTvFormatSystemPrompt),
+                
+                // Add the user message with the web content
+                new UserChatMessage(string.Format(PromptConstants.TextTvFromUrlPromptTemplate, url, webContent))
             };
             
-            // Add the system message
-            chatCompletionOptions.Messages.Add(new ChatRequestSystemMessage(PromptConstants.TextTvFormatSystemPrompt));
+            // Call the OpenAI API with chat completion options
+            var options = new ChatCompletionOptions
+            {
+                Temperature = 0.2f // Low temperature for consistent, formatted output
+            };
             
-            // Add the user message with the web content
-            var prompt = string.Format(PromptConstants.TextTvFromUrlPromptTemplate, url, webContent);
-            chatCompletionOptions.Messages.Add(new ChatRequestUserMessage(prompt));
+            ChatCompletion completion = await _chatClient.CompleteChatAsync(messages, options);
             
-            // Call the OpenAI API
-            var response = await _client.GetChatCompletionsAsync(chatCompletionOptions);
-            if (response.Value.Choices.Count == 0)
+            if (completion == null || completion.Content.Count == 0)
             {
                 Console.WriteLine("OpenAI returned an empty response.");
                 return null;
             }
             
-            var responseContent = response.Value.Choices[0].Message.Content;
+            string? responseContent = completion.Content[0].Text;
+            
+            if (string.IsNullOrWhiteSpace(responseContent))
+            {
+                Console.WriteLine("OpenAI returned an empty text response.");
+                return null;
+            }
             
             // Parse the JSON response
             try
@@ -75,6 +95,12 @@ public class OpenAiService
                     responseContent, 
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
+                
+                if (textTvPage == null)
+                {
+                    Console.WriteLine("Failed to deserialize the response to a TextTvPage object.");
+                    return null;
+                }
                 
                 return textTvPage;
             }
@@ -95,16 +121,26 @@ public class OpenAiService
     /// <summary>
     /// Cleans the JSON response from OpenAI by removing markdown formatting
     /// </summary>
+    /// <param name="response">The response string to clean</param>
+    /// <returns>The cleaned response string</returns>
     private string CleanJsonResponse(string response)
     {
-        // Remove markdown code blocks if present
-        if (response.StartsWith("```json"))
+        if (string.IsNullOrEmpty(response))
         {
-            response = response.Replace("```json", "").Replace("```", "").Trim();
+            return string.Empty;
+        }
+        
+        // Remove markdown code blocks if present
+        if (response.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+        {
+            response = response.Replace("```json", "", StringComparison.OrdinalIgnoreCase)
+                             .Replace("```", "")
+                             .Trim();
         }
         else if (response.StartsWith("```"))
         {
-            response = response.Replace("```", "").Trim();
+            response = response.Replace("```", "")
+                             .Trim();
         }
         
         return response;
