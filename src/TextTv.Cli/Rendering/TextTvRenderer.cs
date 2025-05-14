@@ -139,6 +139,9 @@ public class TextTvRenderer
         // Reset colors
         Console.BackgroundColor = ConsoleColor.Black;
         Console.ForegroundColor = ConsoleColor.White;
+        
+        // Add an extra newline to ensure we don't have color bleeding issues
+        Console.WriteLine();
     }
     
     /// <summary>
@@ -155,5 +158,8 @@ public class TextTvRenderer
         // Reset colors
         Console.BackgroundColor = ConsoleColor.Black;
         Console.ForegroundColor = ConsoleColor.White;
+        
+        // Add an extra newline to ensure we don't have color bleeding issues
+        Console.WriteLine();
     }
 }
