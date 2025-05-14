@@ -37,13 +37,23 @@ public class CommandLineOptions
             return options;
         }
 
-        // If only one argument is provided without flags, treat it as page number (backwards compatibility)
+        // If only one argument is provided without flags, auto-detect if it's a URL or page number
         if (args.Length == 1 && !args[0].StartsWith("--"))
         {
-            if (int.TryParse(args[0], out var pageNumber))
+            string arg = args[0];
+            
+            // Check if the argument looks like a URL (starts with http:// or https://)
+            if (arg.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || 
+                arg.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                options.Url = arg;
+            }
+            // Otherwise, try to parse it as a page number
+            else if (int.TryParse(arg, out var pageNumber))
             {
                 options.PageNumber = pageNumber;
             }
+            
             return options;
         }
 
@@ -83,15 +93,19 @@ public class CommandLineOptions
     public static void PrintUsage()
     {
         Console.WriteLine("Usage:");
-        Console.WriteLine("  texttv <page-number>");
+        Console.WriteLine("  texttv <page-number or url>");
         Console.WriteLine("  texttv --pagenumber <page-number>");
         Console.WriteLine("  texttv --url <url>");
         Console.WriteLine();
         Console.WriteLine("Options:");
-        Console.WriteLine("  <page-number>             Text TV page number (default mode)");
-        Console.WriteLine("  --pagenumber, -p <number> Text TV page number");
-        Console.WriteLine("  --url, -u <url>           URL to convert to Text TV format");
-        Console.WriteLine("  --help, -h                Show help information");
+        Console.WriteLine("  <page-number or url>       Auto-detects if input is a page number or URL");
+        Console.WriteLine("  --pagenumber, -p <number>  Text TV page number");
+        Console.WriteLine("  --url, -u <url>            URL to convert to Text TV format");
+        Console.WriteLine("  --help, -h                 Show help information");
+        Console.WriteLine();
+        Console.WriteLine("Examples:");
+        Console.WriteLine("  texttv 100                 Show Text TV page 100");
+        Console.WriteLine("  texttv https://example.com Convert web page to Text TV format");
     }
 }
 

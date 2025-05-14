@@ -115,16 +115,24 @@ dotnet build
 
 ## Running the Application
 
-### TextTV Mode
+### Auto-Detection Mode (New!)
 
-To run the application in TextTV mode and view a Text TV page (e.g., page 100):
+The application can now automatically detect if the input is a URL or a page number:
 
 ```bash
 cd src/texttv-csharp/TextTv.Cli
+# For page numbers
 dotnet run -- 100
+
+# For URLs
+dotnet run -- https://example.com
 ```
 
-Or use the explicit `--pagenumber` flag:
+This simplifies usage by automatically determining the appropriate mode based on your input.
+
+### TextTV Mode
+
+You can still explicitly specify TextTV mode using the `--pagenumber` flag:
 
 ```bash
 dotnet run -- --pagenumber 100
@@ -134,10 +142,9 @@ Replace `100` with any valid Text TV page number.
 
 ### URL Mode
 
-To run the application in URL mode and convert a web page to TextTV format:
+Similarly, you can explicitly use URL mode with the `--url` flag:
 
 ```bash
-cd src/texttv-csharp/TextTv.Cli
 dotnet run -- --url https://example.com
 ```
 
