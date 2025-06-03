@@ -22,7 +22,8 @@ public static class TextParsingHelper
                           node.InnerHtml.Contains("transform:scaleY(2)") ||
                           node.InnerHtml.Contains("bgY");
                           
-        bool isCyan = node.InnerHtml.Contains("bgC") || 
+        bool isCyan = classes.Contains("C") ||
+                      node.InnerHtml.Contains("bgC") ||
                       node.InnerHtml.Contains("Cyan") ||
                       node.GetAttributeValue("style", "").Contains("Cyan");
         
