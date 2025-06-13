@@ -35,6 +35,21 @@ public class TextParsingHelperTests
         // Assert
         Assert.AreEqual(ConsoleColor.Cyan, color);
     }
+
+    [TestMethod]
+    public void DetermineTextColor_CyanForClassAttribute()
+    {
+        // Arrange
+        var doc = new HtmlDocument();
+        doc.LoadHtml("<div class='C'>Secondary Text</div>");
+        var node = doc.DocumentNode.SelectSingleNode("//div");
+
+        // Act
+        var color = TextParsingHelper.DetermineTextColor(node!);
+
+        // Assert
+        Assert.AreEqual(ConsoleColor.Cyan, color);
+    }
     
     [TestMethod]
     public void DetermineTextColor_WhiteForRegularText()
